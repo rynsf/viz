@@ -10,6 +10,7 @@ int maximum(int* arr, int n) {
         if (arr[i] > m) {
             m = arr[i];
         }
+        //pthread stop
     }
     return m;
 }
@@ -55,6 +56,7 @@ int main() {
         EndDrawing();
         t = GetTime();
     }
+    UnloadFont(iosevka);
     CloseWindow();
     return 0;
 }
