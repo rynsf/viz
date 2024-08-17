@@ -7,6 +7,17 @@ import (
 
 var font rl.Font
 
+func maximum(arr []int) int {
+	m := -1
+	fmt.Println(arr)
+	for _, n := range arr {
+		if n > m {
+			m = n
+		}
+	}
+	return m
+}
+
 func vizArray(arr []int) {
 	var boxSize float32 = 100
 	thick := boxSize / 10
@@ -35,14 +46,13 @@ func vizArray(arr []int) {
 }
 
 func main() {
-	fmt.Println("hello world")
 	rl.InitWindow(800, 600, "Raylib")
 	defer rl.CloseWindow()
 	font = rl.LoadFontEx("./iosevka.ttf", 56, nil, 0)
 
 	rl.SetTargetFPS(60)
 
-	arr := []int{1, 2, 3, 4, 5}
+	arr := []int{5, 2, 8, 7, 9}
 	for !rl.WindowShouldClose() {
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.GetColor(0x181818ff))
