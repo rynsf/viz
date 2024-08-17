@@ -80,8 +80,10 @@ func main() {
 	rl.SetTargetFPS(60)
 
 	arr := []int{5, 2, 8, 7, 9}
-	temparr := arr
-	tempm := -1
+	tempData := data{
+		arr: arr,
+		m:   -1,
+	}
 	chOut := make(chan data)
 	timestart := rl.GetTime()
 	go maximum(arr, chOut)
@@ -89,14 +91,12 @@ func main() {
 		if rl.IsKeyPressed(rl.KeyN) || rl.GetTime()-timestart > 2 {
 			fmt.Println("pressed next")
 			timestart = rl.GetTime()
-			temp := <-chOut
-			temparr = temp.arr
-			tempm = temp.m
+			tempData = <-chOut
 		}
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.GetColor(0x181818ff))
-		vizArray(temparr)
-		vizVar(tempm)
+		vizArray(tempData.arr)
+		vizVar(tempData.m)
 		rl.EndDrawing()
 	}
 }
