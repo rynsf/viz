@@ -8,29 +8,32 @@ import (
 var font rl.Font
 
 type data struct {
-	arr []int
-	m   int
+	arr   []int
+	index int
+	m     int
 }
 
 func maximum(arr []int, chOut chan data) int {
 	m := -1
-	for _, n := range arr {
+	for i, n := range arr {
 		if n > m {
 			m = n
 		}
 		chOut <- data{
-			arr: arr,
-			m:   m,
+			arr:   arr,
+			index: i,
+			m:     m,
 		}
 	}
 	return m
 }
 
-func vizVar(val int) {
+func vizVar(val int, pos float32) {
 	var boxSize float32 = 100
 	thick := boxSize / 10
+	pad := -thick
 	rec := rl.Rectangle{
-		X:      0,
+		X:      (boxSize + pad) * pos,
 		Y:      200,
 		Width:  boxSize,
 		Height: boxSize,
@@ -81,8 +84,9 @@ func main() {
 
 	arr := []int{5, 2, 8, 7, 9}
 	tempData := data{
-		arr: arr,
-		m:   -1,
+		arr:   arr,
+		index: 0,
+		m:     -1,
 	}
 	chOut := make(chan data)
 	timestart := rl.GetTime()
@@ -96,7 +100,7 @@ func main() {
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.GetColor(0x181818ff))
 		vizArray(tempData.arr)
-		vizVar(tempData.m)
+		vizVar(tempData.m, float32(tempData.index))
 		rl.EndDrawing()
 	}
 }
