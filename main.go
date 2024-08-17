@@ -7,14 +7,21 @@ import (
 
 var font rl.Font
 
-func maximum(arr []int, chOut chan []int) int {
+type data struct {
+	arr []int
+	m   int
+}
+
+func maximum(arr []int, chOut chan data) int {
 	m := 1
-	for i := range arr {
-		//if n > m {
-		//	m = n
-		//}
-		chOut <- arr
-		arr[i] = m
+	for _, n := range arr {
+		if n > m {
+			m = n
+		}
+		chOut <- data{
+			arr: arr,
+			m:   m,
+		}
 	}
 	return m
 }
@@ -55,14 +62,14 @@ func main() {
 
 	arr := []int{5, 2, 8, 7, 9}
 	temparr := arr
-	chOut := make(chan []int)
+	chOut := make(chan data)
 	timestart := rl.GetTime()
 	go maximum(arr, chOut)
 	for !rl.WindowShouldClose() {
 		if rl.IsKeyReleased(rl.KeyN) || rl.GetTime()-timestart > 2 {
 			fmt.Println("pressed next")
 			timestart = rl.GetTime()
-			temparr = <-chOut
+			temparr = (<-chOut).arr
 		}
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.GetColor(0x181818ff))
