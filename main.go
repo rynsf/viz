@@ -7,13 +7,14 @@ import (
 
 var font rl.Font
 
-func maximum(arr []int) int {
-	m := -1
-	fmt.Println(arr)
-	for _, n := range arr {
-		if n > m {
-			m = n
-		}
+func maximum(arr []int, chOut chan []int) int {
+	m := 1
+	for i := range arr {
+		//if n > m {
+		//	m = n
+		//}
+		chOut <- arr
+		arr[i] = m
 	}
 	return m
 }
@@ -53,11 +54,19 @@ func main() {
 	rl.SetTargetFPS(60)
 
 	arr := []int{5, 2, 8, 7, 9}
+	temparr := arr
+	chOut := make(chan []int)
+	timestart := rl.GetTime()
+	go maximum(arr, chOut)
 	for !rl.WindowShouldClose() {
+		if rl.IsKeyReleased(rl.KeyN) || rl.GetTime()-timestart > 2 {
+			fmt.Println("pressed next")
+			timestart = rl.GetTime()
+			temparr = <-chOut
+		}
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.GetColor(0x181818ff))
-		//rl.DrawTextEx(font, "Hello World", rl.Vector2{X: 0, Y: 0}, 56, 0, rl.RayWhite)
-		vizArray(arr)
+		vizArray(temparr)
 		rl.EndDrawing()
 	}
 }
