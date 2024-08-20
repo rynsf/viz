@@ -34,9 +34,11 @@ func binarySearch(arr []int, target int, chOut chan data) int {
 		} else if arr[mid] > target {
 			high = mid - 1
 		} else {
+			close(chOut)
 			return mid
 		}
 	}
+	close(chOut)
 	return -1
 }
 
@@ -114,8 +116,10 @@ func main() {
 		if rl.IsKeyPressed(rl.KeyN) || rl.GetTime()-timestart > 2 {
 			fmt.Println("pressed next")
 			timestart = rl.GetTime()
-			tempData = <-chOut
-			fmt.Println(tempData)
+			recieved, ok := <-chOut
+			if ok {
+				tempData = recieved
+			}
 		}
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.GetColor(0x181818ff))
