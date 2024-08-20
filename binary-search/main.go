@@ -19,16 +19,9 @@ type data struct {
 
 func binarySearch(arr []int, target int, chOut chan data) int {
 	low, high := 0, len(arr)-1
-	var mid int
+	mid := (low + high) / 2
 
 	for low <= high {
-		mid = (low + high) / 2
-		chOut <- data{
-			arr:  arr,
-			low:  low,
-			mid:  mid,
-			high: high,
-		}
 		if arr[mid] < target {
 			low = mid + 1
 		} else if arr[mid] > target {
@@ -36,6 +29,13 @@ func binarySearch(arr []int, target int, chOut chan data) int {
 		} else {
 			close(chOut)
 			return mid
+		}
+		mid = (low + high) / 2
+		chOut <- data{
+			arr:  arr,
+			low:  low,
+			mid:  mid,
+			high: high,
 		}
 	}
 	close(chOut)
@@ -105,9 +105,9 @@ func main() {
 	target := 0
 	tempData := data{
 		arr:  arr,
-		low:  -1,
-		mid:  -1,
-		high: -1,
+		low:  0,
+		mid:  len(arr) / 2,
+		high: len(arr) - 1,
 	}
 	chOut := make(chan data)
 	timestart := rl.GetTime()
