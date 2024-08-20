@@ -25,6 +25,7 @@ func maximum(arr []int, chOut chan data) int {
 			m:     m,
 		}
 	}
+	close(chOut)
 	return m
 }
 
@@ -95,7 +96,10 @@ func main() {
 		if rl.IsKeyPressed(rl.KeyN) || rl.GetTime()-timestart > 2 {
 			fmt.Println("pressed next")
 			timestart = rl.GetTime()
-			tempData = <-chOut
+			recieved, ok := <-chOut
+			if ok {
+				tempData = recieved
+			}
 		}
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.GetColor(0x181818ff))
