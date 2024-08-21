@@ -19,6 +19,7 @@ type linkedlist struct {
 }
 
 func vizLinkedList(head *linkedlist) {
+	pad = 0
 	i := 0
 	for head != nil {
 		rec := rl.Rectangle{
@@ -38,19 +39,30 @@ func vizLinkedList(head *linkedlist) {
 			fontSize,
 			0,
 			rl.Green)
-		head = head.next
-		i += 1
 		lineStart := rl.Vector2{X: rec.X + rec.Width,
 			Y: rec.Y + (rec.Height / 2)}
-		lineEnd := rl.Vector2{X: lineStart.X + float32(ArrowLen-20),
+		lineEnd := rl.Vector2{X: lineStart.X + float32(ArrowLen-10),
 			Y: lineStart.Y,
 		}
 		rl.DrawLineEx(lineStart, lineEnd, thick, rl.RayWhite)
-		rl.DrawTriangle(
-			rl.Vector2{X: lineEnd.X + 10, Y: lineEnd.Y},
-			rl.Vector2{X: lineEnd.X - 20, Y: lineEnd.Y - 20},
-			rl.Vector2{X: lineEnd.X - 20, Y: lineEnd.Y + 20},
-			rl.RayWhite)
+		if head.next == nil {
+			rl.DrawLineEx(rl.Vector2{X: lineEnd.X, Y: lineEnd.Y - 20},
+				rl.Vector2{X: lineEnd.X, Y: lineEnd.Y + 20},
+				thick,
+				rl.RayWhite)
+			rl.DrawLineEx(rl.Vector2{X: lineEnd.X + 20, Y: lineEnd.Y - 10},
+				rl.Vector2{X: lineEnd.X + 20, Y: lineEnd.Y + 10},
+				thick,
+				rl.RayWhite)
+		} else {
+			rl.DrawTriangle(
+				rl.Vector2{X: lineEnd.X + 10, Y: lineEnd.Y},
+				rl.Vector2{X: lineEnd.X - 20, Y: lineEnd.Y - 20},
+				rl.Vector2{X: lineEnd.X - 20, Y: lineEnd.Y + 20},
+				rl.RayWhite)
+		}
+		head = head.next
+		i += 1
 	}
 }
 
