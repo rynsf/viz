@@ -66,6 +66,23 @@ func vizLinkedList(head *linkedlist) {
 	}
 }
 
+func vizSelectedNode(head *linkedlist, target *linkedlist, color rl.Color) {
+	i := 0
+	for head != nil {
+		if head == target {
+			rec := rl.Rectangle{
+				X:      (boxSize + pad + float32(ArrowLen)) * float32(i),
+				Y:      0,
+				Width:  boxSize,
+				Height: boxSize,
+			}
+			rl.DrawRectangleLinesEx(rec, thick, color)
+		}
+		head = head.next
+		i += 1
+	}
+}
+
 func main() {
 	head := linkedlist{
 		val:  1,
@@ -91,6 +108,7 @@ func main() {
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.GetColor(0x181818ff))
 		vizLinkedList(&head)
+		vizSelectedNode(&head, &node2, rl.Yellow)
 		rl.EndDrawing()
 	}
 }
