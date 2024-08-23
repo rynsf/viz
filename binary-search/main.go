@@ -50,13 +50,6 @@ func binarySearch(arr []int, target int, chOut chan data) int {
 			result: -1,
 		}
 	}
-	chOut <- data{
-		arr:    arr,
-		low:    low,
-		mid:    mid,
-		high:   high,
-		result: -1,
-	}
 	close(chOut)
 	return -1
 }
@@ -126,11 +119,12 @@ func main() {
 
 	arr := []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}
 	var target int
+	var done bool
 	var tempData data
 	var chOut chan data
 	var timestart float64
 	init := func() {
-		target = randrange(0, 17)
+		target = randrange(-5, 20)
 		tempData = data{
 			arr:    arr,
 			low:    0,
@@ -140,6 +134,7 @@ func main() {
 		}
 		chOut = make(chan data)
 		timestart = rl.GetTime()
+		done = false
 		go binarySearch(arr, target, chOut)
 	}
 	init()
@@ -150,6 +145,8 @@ func main() {
 			recieved, ok := <-chOut
 			if ok {
 				tempData = recieved
+			} else {
+				done = true
 			}
 		}
 		if rl.IsKeyPressed(rl.KeyR) {
@@ -159,19 +156,28 @@ func main() {
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.GetColor(0x181818ff))
 		vizArray(tempData.arr)
-		vizWindow(tempData.low, tempData.high, rl.Red)
-		if tempData.result == -1 {
+		if done {
+			if tempData.result == -1 {
+				rl.DrawTextEx(font,
+					fmt.Sprintf("Not Found"),
+					rl.Vector2{X: 0, Y: 200},
+					fontSize,
+					0,
+					rl.Green)
+			} else {
+				vizWindow(tempData.mid, tempData.mid, rl.Yellow)
+				rl.DrawTextEx(font,
+					fmt.Sprintf("Found at index: %d", tempData.result),
+					rl.Vector2{X: 0, Y: 200},
+					fontSize,
+					0,
+					rl.Green)
+			}
+		} else {
+			vizWindow(tempData.low, tempData.high, rl.Red)
 			vizWindow(tempData.mid, tempData.mid, rl.Blue)
 			rl.DrawTextEx(font,
 				fmt.Sprintf("Searching for: %d", target),
-				rl.Vector2{X: 0, Y: 200},
-				fontSize,
-				0,
-				rl.Green)
-		} else {
-			vizWindow(tempData.mid, tempData.mid, rl.Yellow)
-			rl.DrawTextEx(font,
-				fmt.Sprintf("Found at index: %d", tempData.result),
 				rl.Vector2{X: 0, Y: 200},
 				fontSize,
 				0,
