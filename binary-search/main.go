@@ -14,10 +14,11 @@ var pad = -thick
 const fontSize = 58
 
 type data struct {
-	arr  []int
-	low  int
-	mid  int
-	high int
+	arr    []int
+	low    int
+	mid    int
+	high   int
+	result int
 }
 
 func binarySearch(arr []int, target int, chOut chan data) int {
@@ -30,16 +31,31 @@ func binarySearch(arr []int, target int, chOut chan data) int {
 		} else if arr[mid] > target {
 			high = mid - 1
 		} else {
+			chOut <- data{
+				arr:    arr,
+				low:    low,
+				mid:    mid,
+				high:   high,
+				result: mid,
+			}
 			close(chOut)
 			return mid
 		}
 		mid = (low + high) / 2
 		chOut <- data{
-			arr:  arr,
-			low:  low,
-			mid:  mid,
-			high: high,
+			arr:    arr,
+			low:    low,
+			mid:    mid,
+			high:   high,
+			result: -1,
 		}
+	}
+	chOut <- data{
+		arr:    arr,
+		low:    low,
+		mid:    mid,
+		high:   high,
+		result: -1,
 	}
 	close(chOut)
 	return -1
@@ -116,10 +132,11 @@ func main() {
 	init := func() {
 		target = randrange(0, 17)
 		tempData = data{
-			arr:  arr,
-			low:  0,
-			mid:  len(arr) / 2,
-			high: len(arr) - 1,
+			arr:    arr,
+			low:    0,
+			mid:    len(arr) / 2,
+			high:   len(arr) - 1,
+			result: -1,
 		}
 		chOut = make(chan data)
 		timestart = rl.GetTime()
@@ -143,13 +160,23 @@ func main() {
 		rl.ClearBackground(rl.GetColor(0x181818ff))
 		vizArray(tempData.arr)
 		vizWindow(tempData.low, tempData.high, rl.Red)
-		vizWindow(tempData.mid, tempData.mid, rl.Blue)
-		rl.DrawTextEx(font,
-			fmt.Sprintf("Searching for: %d", target),
-			rl.Vector2{X: 0, Y: 200},
-			fontSize,
-			0,
-			rl.Green)
+		if tempData.result == -1 {
+			vizWindow(tempData.mid, tempData.mid, rl.Blue)
+			rl.DrawTextEx(font,
+				fmt.Sprintf("Searching for: %d", target),
+				rl.Vector2{X: 0, Y: 200},
+				fontSize,
+				0,
+				rl.Green)
+		} else {
+			vizWindow(tempData.mid, tempData.mid, rl.Yellow)
+			rl.DrawTextEx(font,
+				fmt.Sprintf("Found at index: %d", tempData.result),
+				rl.Vector2{X: 0, Y: 200},
+				fontSize,
+				0,
+				rl.Green)
+		}
 		rl.EndDrawing()
 	}
 }
